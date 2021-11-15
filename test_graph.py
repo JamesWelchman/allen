@@ -1,29 +1,29 @@
-from allen import breadth_first_search, RelationPair, DirectedGraph
+from allen import graph_traverse, VertexPair, DirectedGraph
 
 
-def test_breadth_first_search_single():
+def test_graph_traverse_first_search_single():
     nodes = {
         "one": ["two", "three"],
     }
 
-    assert set(breadth_first_search(nodes, "one", "two")) == set([("one", "two")])
-    assert set(breadth_first_search(nodes, "one", "three")) == set([("one", "three")])
-    assert not set(breadth_first_search(nodes, "two", "three"))
+    assert set(graph_traverse(nodes, "one", "two")) == set([("one", "two")])
+    assert set(graph_traverse(nodes, "one", "three")) == set([("one", "three")])
+    assert not set(graph_traverse(nodes, "two", "three"))
 
 
-def test_breadth_first_search_double():
+def test_graph_traverse_first_search_double():
     nodes = {
         "one": ["two", "three"],
         "two": ["three"],
     }
 
-    assert set(breadth_first_search(nodes, "one", "three")) == {("one", "three"), ("one", "two", "three")}
-    assert set(breadth_first_search(nodes, "one", "two")) == set([("one", "two")])
-    assert set(breadth_first_search(nodes, "two", "three")) == set([("two", "three")])
-    assert not set(breadth_first_search(nodes, "three", "two"))
+    assert set(graph_traverse(nodes, "one", "three")) == {("one", "three"), ("one", "two", "three")}
+    assert set(graph_traverse(nodes, "one", "two")) == set([("one", "two")])
+    assert set(graph_traverse(nodes, "two", "three")) == set([("two", "three")])
+    assert not set(graph_traverse(nodes, "three", "two"))
 
 
-def test_breadth_first_double_triple():
+def test_graph_traverse_first_double_triple():
     nodes = {
         "one": ["two", "three", "four"],
         "two": ["three", "four"],
@@ -31,29 +31,29 @@ def test_breadth_first_double_triple():
         "four": ["two"],
     }
 
-    assert set(breadth_first_search(nodes, "one", "two")) == {("one", "two"), ("one", "four", "two"), ("one", "three", "four", "two")}
-    assert set(breadth_first_search(nodes, "one", "three")) == {("one", "three"),
+    assert set(graph_traverse(nodes, "one", "two")) == {("one", "two"), ("one", "four", "two"), ("one", "three", "four", "two")}
+    assert set(graph_traverse(nodes, "one", "three")) == {("one", "three"),
                                                                ("one", "two", "three"),
                                                                ("one", "four", "two", "three")}
-    assert set(breadth_first_search(nodes, "one", "four")) == {("one", "four"),
+    assert set(graph_traverse(nodes, "one", "four")) == {("one", "four"),
                                                                ("one", "two", "four"),
                                                                ("one", "three", "four"),
                                                                ("one", "two", "three", "four")}
-    assert set(breadth_first_search(nodes, "two", "one")) == set([("two", "three", "one")])
-    assert set(breadth_first_search(nodes, "two", "three")) == set([("two", "three")])
-    assert set(breadth_first_search(nodes, "two", "four")) == {("two", "four"),
+    assert set(graph_traverse(nodes, "two", "one")) == set([("two", "three", "one")])
+    assert set(graph_traverse(nodes, "two", "three")) == set([("two", "three")])
+    assert set(graph_traverse(nodes, "two", "four")) == {("two", "four"),
                                                                ("two", "three", "four"),
                                                                ("two", "three", "one", "four")}
-    assert set(breadth_first_search(nodes, "three", "one")) == set([("three", "one")])
-    assert set(breadth_first_search(nodes, "three", "two")) == {("three", "one", "two"),
+    assert set(graph_traverse(nodes, "three", "one")) == set([("three", "one")])
+    assert set(graph_traverse(nodes, "three", "two")) == {("three", "one", "two"),
                                                                 ("three", "one", "four", "two"),
                                                                 ("three", "four", "two")}
-    assert set(breadth_first_search(nodes, "three", "four")) == {("three", "four"),
+    assert set(graph_traverse(nodes, "three", "four")) == {("three", "four"),
                                                                  ("three", "one", "four"),
                                                                  ("three", "one", "two", "four")}
-    assert set(breadth_first_search(nodes, "four", "one")) == set([("four", "two", "three", "one")])
-    assert set(breadth_first_search(nodes, "four", "two")) == set([("four", "two")])
-    assert set(breadth_first_search(nodes, "four", "three")) == set([("four", "two", "three")])
+    assert set(graph_traverse(nodes, "four", "one")) == set([("four", "two", "three", "one")])
+    assert set(graph_traverse(nodes, "four", "two")) == set([("four", "two")])
+    assert set(graph_traverse(nodes, "four", "three")) == set([("four", "two", "three")])
 
 
 class Relation:
@@ -72,7 +72,7 @@ class Relation:
 
 def test_dgraph_relation_one():
     edges = [
-        RelationPair("one", Relation(3), "two"),
+        VertexPair("one", Relation(3), "two"),
     ]
 
     assert list(DirectedGraph(edges)._relation_path_gen("one", "two")) == [Relation(3)]
@@ -80,9 +80,9 @@ def test_dgraph_relation_one():
 
 def test_dgraph_relation_two():
     edges = [
-        RelationPair("one", Relation(7), "two"),
-        RelationPair("one", Relation(11), "three"),
-        RelationPair("two", Relation(13), "three"),
+        VertexPair("one", Relation(7), "two"),
+        VertexPair("one", Relation(11), "three"),
+        VertexPair("two", Relation(13), "three"),
     ]
 
     dgraph = DirectedGraph(edges)
@@ -97,13 +97,13 @@ def test_dgraph_relation_two():
 
 def test_graph_relation_three():
     edges = [
-        RelationPair("one", Relation(7), "two"),
-        RelationPair("one", Relation(11), "three"),
-        RelationPair("one", Relation(13), "four"),
-        RelationPair("two", Relation(19), "three"),
-        RelationPair("three", Relation(23), "one"),
-        RelationPair("three", Relation(29), "four"),
-        RelationPair("four", Relation(31), "two"),
+        VertexPair("one", Relation(7), "two"),
+        VertexPair("one", Relation(11), "three"),
+        VertexPair("one", Relation(13), "four"),
+        VertexPair("two", Relation(19), "three"),
+        VertexPair("three", Relation(23), "one"),
+        VertexPair("three", Relation(29), "four"),
+        VertexPair("four", Relation(31), "two"),
     ]
 
     dgraph = DirectedGraph(edges)
